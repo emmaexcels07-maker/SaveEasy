@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SaveEasy - Savings App</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <header>
+
+        <h1>SaveEasy</h1>
+
+        <p>
+            Simple Community Savings System
+        </p>
+
+    </header>
+
+
+    <main>
+
+
+        <!-- =====================================================
+        LOGIN PAGE
+        ====================================================== -->
+
+        <div class="container" id="loginPage">
+
+            <div class="card login-box">
+
+                <h2>Login</h2>
+
+
+                <div id="loginMessage" class="message" role="alert" aria-live="polite"></div>
+
+
+                <label for="loginUsername">
+                    Username
+                </label>
+
+                <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+
+
+                <label for="loginRole">
+                    Login As
+                </label>
+
+                <select id="loginRole">
+
+                    <option value="admin">
+                        Admin
+                    </option>
+
+                    <option value="agent">
+                        Agent
+                    </option>
+
+                    <option value="member">
+                        Member
+                    </option>
+
+                </select>
+
+
+                <button type="button" onclick="login()">
+                    Login
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+        ADMIN DASHBOARD
+        ====================================================== -->
+
+        <div class="container dashboard" id="adminDashboard">
+
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+                        Admin Dashboard
+                    </h2>
+
+                    <p>
+                        Manage agents and members
+                    </p>
+
+                </div>
+
+
+                <button type="button" onclick="logout()">
+                    Logout
+                </button>
+
+            </div>
+
+
+            <div id="adminMessage" class="message" role="alert" aria-live="polite"></div>
+
+
+
+            <!-- ADMIN STATISTICS -->
+
+            <div class="grid">
+
+
+                <div class="stat">
+
+                    <h3>
+                        Total Members
+                    </h3>
+
+                    <p id="totalMembers">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+                        Total Agents
+                    </h3>
+
+                    <p id="totalAgents">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+                        Total Savings
+                    </h3>
+
+                    <p id="totalSavings">
+                        ₦0
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+            CREATE BUTTONS
+            ================================================== -->
+
+            <div class="create-actions">
+
+                <button type="button" class="create-button" onclick="openModal('memberModal')">
+
+                    <span class="button-icon">+</span>
+                    Create Member
+
+                </button>
+
+
+                <button type="button" class="create-button agent-create" onclick="openModal('agentModal')">
+
+                    <span class="button-icon">+</span>
+                    Create Agent
+
+                </button>
+
+
+                <button type="button" class="create-button" onclick="showAdminSection('history')">
+
+                    <span class="button-icon">+</span>
+                    Agent Deposit History
+
+                </button>
+
+
+                <button type="button" class="create-button" onclick="showAdminSection('members')">
+
+                    <span class="button-icon">+</span>
+                    All Members
+
+                </button>
+
+            </div>
+
+
+            <!-- =====================================================
+ADMIN INFORMATION SECTION
+====================================================== -->
+
+            <div id="adminDataSection" class="card admin-data-section">
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <h2 id="adminSectionTitle">
+                            Agent Deposit History
+                        </h2>
+
+                        <p id="adminSectionDescription">
+                            See which agent added money to each member account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AGENT DEPOSIT HISTORY -->
+
+                <div id="adminHistoryView">
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Agent</th>
+                                    <th>Member</th>
+                                    <th>Username</th>
+                                    <th>Amount</th>
+                                    <th>Currency</th>
+                                    <th>Points</th>
+                                    <th>Date</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="adminAgentHistory">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ALL MEMBERS -->
+
+                <div id="adminMembersView" class="hidden">
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Username</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="memberTable">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+MEMBER DETAILS MODAL
+====================================================== -->
+
+            <div id="memberDetailsModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div>
+
+                            <h2>Member Details</h2>
+
+                            <p>
+                                Complete information for this member.
+                            </p>
+
+                        </div>
+
+
+                        <button type="button" class="close-modal" onclick="closeModal('memberDetailsModal')">
+
+                            ×
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Currency</th>
+                                    <th>Balance</th>
+                                    <th>Points</th>
+                                    <th>Date</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td id="detailMemberName"></td>
+                                    <td id="detailMemberUsername"></td>
+                                    <td id="detailMemberCurrency"></td>
+                                    <td id="detailMemberBalance"></td>
+                                    <td id="detailMemberPoints"></td>
+                                    <td id="detailMemberDate"></td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================================
+            CREATE MEMBER MODAL
+            ====================================================== -->
+
+            <div id="memberModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div>
+
+                            <h2>
+                                Create Member
+                            </h2>
+
+                            <p>
+                                Add a new savings member.
+                            </p>
+
+                        </div>
+
+
+                        <button type="button" class="close-modal" onclick="closeModal('memberModal')">
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <label for="memberName">
+                        Full Name
+                    </label>
+
+                    <input type="text" id="memberName" placeholder="Full name" autocomplete="name">
+
+
+                    <label for="memberUsername">
+                        Username
+                    </label>
+
+                    <input type="text" id="memberUsername" placeholder="Username" autocomplete="username">
+
+
+                    <label for="memberPassword">
+                        Password
+                    </label>
+
+                    <input type="password" id="memberPassword" placeholder="Password" autocomplete="new-password">
+
+
+                    <label for="memberCurrency">
+                        Currency
+                    </label>
+
+                    <select id="memberCurrency">
+
+                        <option value="NGN">
+                            NGN - Nigerian Naira
+                        </option>
+
+                        <option value="USD">
+                            USD - US Dollar
+                        </option>
+
+                        <option value="GBP">
+                            GBP - British Pound
+                        </option>
+
+                        <option value="EUR">
+                            EUR - Euro
+                        </option>
+
+                    </select>
+
+
+                    <div class="modal-actions">
+
+                        <button type="button" class="cancel-button" onclick="closeModal('memberModal')">
+                            Cancel
+                        </button>
+
+
+                        <button type="button" onclick="createMember()">
+                            Create Member
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================================
+            CREATE AGENT MODAL
+            ====================================================== -->
+
+            <div id="agentModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div>
+
+                            <h2>
+                                Create Agent
+                            </h2>
+
+                            <p>
+                                Add a new savings agent.
+                            </p>
+
+                        </div>
+
+
+                        <button type="button" class="close-modal" onclick="closeModal('agentModal')">
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <label for="agentName">
+                        Full Name
+                    </label>
+
+                    <input type="text" id="agentName" placeholder="Agent full name" autocomplete="name">
+
+
+                    <label for="agentUsername">
+                        Username
+                    </label>
+
+                    <input type="text" id="agentUsername" placeholder="Agent username" autocomplete="username">
+
+
+                    <label for="agentPassword">
+                        Password
+                    </label>
+
+                    <input type="password" id="agentPassword" placeholder="Agent password" autocomplete="new-password">
+
+
+                    <div class="modal-actions">
+
+                        <button type="button" class="cancel-button" onclick="closeModal('agentModal')">
+                            Cancel
+                        </button>
+
+
+                        <button type="button" onclick="createAgent()">
+                            Create Agent
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- END ADMIN DASHBOARD -->
+
+
+
+        <!-- =====================================================
+        AGENT DASHBOARD
+        ====================================================== -->
+
+        <div class="container dashboard" id="agentDashboard">
+
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+                        Agent Dashboard
+                    </h2>
+
+                    <p id="agentWelcome"></p>
+
+                </div>
+
+
+                <button type="button" onclick="logout()">
+                    Logout
+                </button>
+
+            </div>
+
+
+            <div id="agentMessage" class="message" role="alert" aria-live="polite"></div>
+
+
+
+            <!-- COLLECT SAVINGS -->
+
+            <div class="card">
+
+                <h2>
+                    Collect Savings
+                </h2>
+
+                <p>
+                    Search for a member using their name
+                    or username.
+                </p>
+
+
+                <label for="agentMemberSearch">
+                    Search Member
+                </label>
+
+
+                <input list="memberList" type="text" id="agentMemberSearch" placeholder="Search member..."
+                    autocomplete="off" oninput="searchMember()">
+
+
+                <datalist id="memberList"></datalist>
+
+
+
+                <!-- MEMBER DETAILS -->
+
+                <div id="foundMember" class="hidden">
+
+                    <hr>
+
+
+                    <h3 id="foundMemberName"></h3>
+
+
+                    <p>
+
+                        Username:
+
+                        <strong id="foundMemberUsername">
+                        </strong>
+
+                    </p>
+
+
+                    <p>
+
+                        Currency:
+
+                        <strong id="foundMemberCurrency">
+                        </strong>
+
+                    </p>
+
+
+                    <p>
+
+                        Current Balance:
+
+                        <strong id="foundMemberBalance">
+                        </strong>
+
+                    </p>
+
+
+                    <label for="depositAmount">
+                        Amount Collected
+                    </label>
+
+
+                    <input type="number" id="depositAmount" placeholder="Amount collected" min="0.01" step="0.01">
+
+
+                    <button type="button" onclick="addSavings()">
+                        Add Money
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- AGENT HISTORY -->
+
+            <div class="card">
+
+                <h2>
+                    Recent Deposits
+                </h2>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Member
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Currency
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="agentHistory">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+        MEMBER DASHBOARD
+        ====================================================== -->
+
+        <div class="container dashboard" id="memberDashboard">
+
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+                        My Savings
+                    </h2>
+
+                    <p id="memberWelcome"></p>
+
+                </div>
+
+
+                <button type="button" onclick="logout()">
+                    Logout
+                </button>
+
+            </div>
+
+
+            <div id="memberMessage" class="message" role="alert" aria-live="polite"></div>
+
+
+
+            <!-- BALANCE / POINTS -->
+
+            <div class="grid">
+
+
+                <div class="stat">
+
+                    <h3>
+                        Balance
+                    </h3>
+
+                    <p id="myBalance">
+                        ₦0
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+                        Points
+                    </h3>
+
+
+                    <div class="points-row">
+
+                        <p id="myPoints">
+                            0
+                        </p>
+
+
+                        <button type="button" class="small-btn" onclick="convertPoints()">
+                            Convert
+                        </button>
+
+                    </div>
+
+
+                    <small id="pointsInfo">
+
+                        30 points = 15 unit
+
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- WITHDRAWAL -->
+
+            <div class="card">
+
+                <h2>
+                    Withdraw Money
+                </h2>
+
+
+                <p>
+                    Request money from your savings account.
+                </p>
+
+
+                <button type="button" onclick="showWithdrawalForm()" class="warning">
+                    Request Withdrawal
+                </button>
+
+
+
+                <!-- WITHDRAWAL FORM -->
+
+                <div id="withdrawalForm" class="hidden">
+
+                    <hr>
+
+
+                    <h3>
+                        Withdrawal Request
+                    </h3>
+
+
+                    <p>
+
+                        Available:
+
+                        <strong id="withdrawBalance">
+                        </strong>
+
+                    </p>
+
+
+                    <label for="withdrawAmount">
+                        Withdrawal Amount
+                    </label>
+
+
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount" min="0.01" step="0.01">
+
+
+                    <button type="button" onclick="requestWithdrawal()">
+                        Submit Withdrawal Request
+                    </button>
+
+
+                    <button type="button" onclick="hideWithdrawalForm()" class="danger">
+
+                        Cancel
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TRANSACTION HISTORY -->
+
+            <div class="card">
+
+                <h2>
+                    Transaction History
+                </h2>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Type
+                                </th>
+
+                                <th>
+                                    Agent
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Points
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="memberHistory">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
